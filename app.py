@@ -521,34 +521,94 @@ elif page == "刃先座標チェック":
         st.markdown('<div class="info-box">💡 方位は pilotアプリ 3D表示で確認してください</div>', unsafe_allow_html=True)
 
     st.markdown('<div class="section-header">📊 刃先座標計測結果（差分入力）　※ 座標ではなく「差分」の値を入力</div>', unsafe_allow_html=True)
-    st.markdown("各姿勢における計測値（N/E/Z 差分）を入力してください。許容値 **±0.05m（±5cm）**")
+    st.markdown("各姿勢における計測値（N/E/Z 差分）と作業機姿勢画像を入力してください。許容値 **±0.05m（±5cm）**")
 
     THRESHOLD = 0.05
 
+    if "posture_images" not in st.session_state:
+        st.session_state.posture_images = [None, None, None, None]
+
     for i, row in enumerate(st.session_state.blade_results):
-        c0, c1, c2, c3, c4 = st.columns([1, 3, 3, 3, 2])
-        with c0:
-            st.markdown(f"**姿勢 {i+1}**")
-        with c1:
-            n_val = st.text_input("N差分 (m)", row["N"], key=f"n_{i}", placeholder="例: 0.012")
-            st.session_state.blade_results[i]["N"] = n_val
-        with c2:
-            e_val = st.text_input("E差分 (m)", row["E"], key=f"e_{i}", placeholder="例: -0.023")
-            st.session_state.blade_results[i]["E"] = e_val
-        with c3:
-            z_val = st.text_input("Z差分 (m)", row["Z"], key=f"z_{i}", placeholder="例: 0.008")
-            st.session_state.blade_results[i]["Z"] = z_val
-        with c4:
-            # 判定
-            try:
-                n_f, e_f, z_f = float(n_val), float(e_val), float(z_val)
-                ok = all(abs(v) <= THRESHOLD for v in [n_f, e_f, z_f])
-                if ok:
-                    st.markdown('<span class="badge badge-ok">✅ OK ±5cm以内</span>', unsafe_allow_html=True)
+        with st.container():
+            st.markdown(
+                f"<div style='background:var(--komatsu-gray);border:1px solid var(--border);"
+                f"border-left:4px solid var(--komatsu-yellow);border-radius:8px;"
+                f"padding:10px 16px;margin-bottom:8px;font-weight:700;'>📐 姿勢 {i+1}</div>",
+                unsafe_allow_html=True
+            )
+            col_vals, col_img = st.columns([3, 2])
+
+            with col_vals:
+                c1, c2, c3, c4 = st.columns([3, 3, 3, 2])
+                with c1:
+                    n_val = st.text_input("N差分 (m)", row["N"], key=f"n_{i}", placeholder="例: 0.012")
+                    st.session_state.blade_results[i]["N"] = n_val
+                with c2:
+                    e_val = st.text_input("E差分 (m)", row["E"], key=f"e_{i}", placeholder="例: -0.023")
+                    st.session_state.blade_results[i]["E"] = e_val
+                with c3:
+                    z_val = st.text_input("Z差分 (m)", row["Z"], key=f"z_{i}", placeholder="例: 0.008")
+                    st.session_state.blade_results[i]["Z"] = z_val
+                with c4:
+                    st.markdown("<br>", unsafe_allow_html=True)
+                    try:
+                        n_f, e_f, z_f = float(n_val), float(e_val), float(z_val)
+                        all_ok = all(abs(v) <= THRESHOLD for v in [n_f, e_f, z_f])
+                        if all_ok:
+                            st.markdown('<span class="badge badge-ok">✅ OK<br>±5cm以内</span>', unsafe_allow_html=True)
+                        else:
+                            st.markdown('<span class="badge badge-ng">❌ NG<br>超過</span>', unsafe_allow_html=True)
+                    except Exception:
+                        st.markdown('<span class="badge badge-na">未入力</span>', unsafe_allow_html=True)
+
+                try:
+                    n_f, e_f, z_f = float(n_val), float(e_val), float(z_val)
+                    cols_d = st.columns(3)
+                    for col_d, label_d, val_d in zip(cols_d, ["N", "E", "Z"], [n_f, e_f, z_f]):
+                        color_d = "#00C853" if abs(val_d) <= THRESHOLD else "#FF3D3D"
+                        with col_d:
+                            st.markdown(
+                                f"<div style='text-align:center;background:var(--komatsu-mid);"
+                                f"border-radius:6px;padding:6px 4px;margin-top:6px;'>"
+                                f"<div style='font-size:0.7rem;color:var(--text-secondary);'>{label_d}差分</div>"
+                                f"<div style='font-size:1.1rem;font-weight:700;color:{color_d};"
+                                f"font-family:monospace;'>{val_d:+.4f}m</div></div>",
+                                unsafe_allow_html=True
+                            )
+                except Exception:
+                    pass
+
+            with col_img:
+                st.markdown(f"**📷 姿勢{i+1} 作業機写真**")
+                st.markdown(
+                    "<div style='font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;'>"
+                    "全体および作業機接地部が分かる写真をアップロード</div>",
+                    unsafe_allow_html=True
+                )
+                uploaded = st.file_uploader(
+                    f"姿勢{i+1}の写真",
+                    type=["jpg", "jpeg", "png"],
+                    key=f"img_{i}",
+                    label_visibility="collapsed"
+                )
+                if uploaded is not None:
+                    st.session_state.posture_images[i] = uploaded.read()
+
+                if st.session_state.posture_images[i] is not None:
+                    st.image(
+                        st.session_state.posture_images[i],
+                        caption=f"姿勢{i+1} 作業機姿勢",
+                        use_container_width=True
+                    )
+                    st.markdown('<span class="badge badge-ok">📷 画像登録済み</span>', unsafe_allow_html=True)
                 else:
-                    st.markdown('<span class="badge badge-ng">❌ NG 超過</span>', unsafe_allow_html=True)
-            except:
-                st.markdown('<span class="badge badge-na">未入力</span>', unsafe_allow_html=True)
+                    st.markdown(
+                        "<div style='border:2px dashed #444;border-radius:8px;"
+                        "padding:32px;text-align:center;color:#A0A0A0;'>"
+                        "📷<br><span style='font-size:0.85rem;'>写真をアップロード</span><br>"
+                        "<span style='font-size:0.75rem;'>JPG / PNG</span></div>",
+                        unsafe_allow_html=True
+                    )
 
     # 傾向分析
     st.markdown("---")
@@ -686,6 +746,26 @@ elif page == "サマリー・レポート":
             rows_html += f"<tr><td>{row['姿勢']}</td><td>-</td><td>-</td><td>-</td><td><span class='badge badge-na'>未入力</span></td></tr>"
 
     st.markdown(rows_html + "</table>", unsafe_allow_html=True)
+
+    # 作業機姿勢画像サマリー
+    st.markdown("### 📷 作業機姿勢画像")
+    imgs = st.session_state.get("posture_images", [None, None, None, None])
+    if any(img is not None for img in imgs):
+        img_cols = st.columns(4)
+        for i, (col, img) in enumerate(zip(img_cols, imgs)):
+            with col:
+                if img is not None:
+                    st.image(img, caption=f"姿勢 {i+1}", use_container_width=True)
+                    st.markdown('<span class="badge badge-ok">📷 登録済み</span>', unsafe_allow_html=True)
+                else:
+                    st.markdown(
+                        f"<div style='border:2px dashed #444;border-radius:8px;padding:24px;"
+                        f"text-align:center;color:#A0A0A0;'>📷<br><small>姿勢{i+1} 未登録</small></div>",
+                        unsafe_allow_html=True
+                    )
+    else:
+        st.markdown('<div class="info-box">💡 刃先座標チェックページで各姿勢の写真をアップロードすると、ここに表示されます</div>', unsafe_allow_html=True)
+
 
     # JSONダウンロード
     st.markdown("---")
