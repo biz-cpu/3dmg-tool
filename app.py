@@ -1,6 +1,132 @@
 import streamlit as st
 import json
+import base64
 from datetime import datetime
+
+# ─── 姿勢例示SVG（base64エンコード済み） ──────────────────────
+
+_SVG1 = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
+<rect width="320" height="200" fill="#1A1A1A"/>
+<rect x="0" y="165" width="320" height="35" fill="#2D2D2D"/>
+<line x1="0" y1="165" x2="320" y2="165" stroke="#666" stroke-width="2"/>
+<!-- キャタピラ -->
+<rect x="28" y="157" width="104" height="14" rx="4" fill="#444"/>
+<ellipse cx="50" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<ellipse cx="110" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<!-- 車体 -->
+<rect x="35" y="128" width="95" height="32" rx="4" fill="#FFD700"/>
+<rect x="42" y="118" width="80" height="16" rx="3" fill="#E6C200"/>
+<!-- GNSSアンテナ -->
+<rect x="75" y="110" width="6" height="10" fill="#888"/>
+<rect x="70" y="107" width="16" height="4" rx="1" fill="#999"/>
+<!-- ブーム（低め・前方） -->
+<line x1="122" y1="132" x2="225" y2="88" stroke="#FFD700" stroke-width="11" stroke-linecap="round"/>
+<!-- アーム（ダンプエンド：前伸ばし） -->
+<line x1="225" y1="88" x2="282" y2="118" stroke="#E0B800" stroke-width="9" stroke-linecap="round"/>
+<!-- バケット -->
+<polygon points="282,118 298,142 272,157 258,136" fill="#CC9900" stroke="#AA7700" stroke-width="2"/>
+<!-- ツース -->
+<line x1="272" y1="157" x2="268" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="281" y1="153" x2="277" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="290" y1="148" x2="286" y2="165" stroke="#888" stroke-width="3"/>
+<!-- ラベル -->
+<rect x="5" y="3" width="310" height="30" rx="4" fill="#2D2D2D" opacity="0.9"/>
+<text x="160" y="13" text-anchor="middle" fill="#FFD700" font-size="10" font-family="sans-serif" font-weight="bold">姿勢１（標準・推奨）</text>
+<text x="160" y="26" text-anchor="middle" fill="#A0A0A0" font-size="8" font-family="sans-serif">バケットシリンダ:ダンプエンド ／ アームシリンダ:ダンプエンド ／ バケット接地</text>
+</svg>"""
+
+_SVG2 = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
+<rect width="320" height="200" fill="#1A1A1A"/>
+<rect x="0" y="165" width="320" height="35" fill="#2D2D2D"/>
+<line x1="0" y1="165" x2="320" y2="165" stroke="#666" stroke-width="2"/>
+<rect x="28" y="157" width="104" height="14" rx="4" fill="#444"/>
+<ellipse cx="50" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<ellipse cx="110" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<rect x="35" y="128" width="95" height="32" rx="4" fill="#FFD700"/>
+<rect x="42" y="118" width="80" height="16" rx="3" fill="#E6C200"/>
+<rect x="75" y="110" width="6" height="10" fill="#888"/>
+<rect x="70" y="107" width="16" height="4" rx="1" fill="#999"/>
+<!-- ブーム（やや上） -->
+<line x1="122" y1="130" x2="210" y2="65" stroke="#FFD700" stroke-width="11" stroke-linecap="round"/>
+<!-- アーム（ダンプエンド・やや斜め） -->
+<line x1="210" y1="65" x2="270" y2="100" stroke="#E0B800" stroke-width="9" stroke-linecap="round"/>
+<!-- バケット -->
+<polygon points="270,100 286,124 262,140 248,118" fill="#CC9900" stroke="#AA7700" stroke-width="2"/>
+<line x1="262" y1="140" x2="258" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="271" y1="136" x2="267" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="280" y1="130" x2="276" y2="165" stroke="#888" stroke-width="3"/>
+<rect x="5" y="3" width="310" height="30" rx="4" fill="#2D2D2D" opacity="0.9"/>
+<text x="160" y="13" text-anchor="middle" fill="#FFD700" font-size="10" font-family="sans-serif" font-weight="bold">姿勢２（ブーム上げ）</text>
+<text x="160" y="26" text-anchor="middle" fill="#A0A0A0" font-size="8" font-family="sans-serif">ブームを上げ気味 ／ アームシリンダ:ダンプエンド ／ バケット接地</text>
+</svg>"""
+
+_SVG3 = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
+<rect width="320" height="200" fill="#1A1A1A"/>
+<rect x="0" y="165" width="320" height="35" fill="#2D2D2D"/>
+<line x1="0" y1="165" x2="320" y2="165" stroke="#666" stroke-width="2"/>
+<rect x="28" y="157" width="104" height="14" rx="4" fill="#444"/>
+<ellipse cx="50" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<ellipse cx="110" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<rect x="35" y="128" width="95" height="32" rx="4" fill="#FFD700"/>
+<rect x="42" y="118" width="80" height="16" rx="3" fill="#E6C200"/>
+<rect x="75" y="110" width="6" height="10" fill="#888"/>
+<rect x="70" y="107" width="16" height="4" rx="1" fill="#999"/>
+<!-- ブーム -->
+<line x1="122" y1="130" x2="200" y2="68" stroke="#FFD700" stroke-width="11" stroke-linecap="round"/>
+<!-- アーム（垂直気味） -->
+<line x1="200" y1="68" x2="204" y2="148" stroke="#E0B800" stroke-width="9" stroke-linecap="round"/>
+<!-- バケット（ダンプエンド） -->
+<polygon points="204,148 222,165 200,172 185,155" fill="#CC9900" stroke="#AA7700" stroke-width="2"/>
+<line x1="200" y1="172" x2="196" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="209" y1="170" x2="205" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="218" y1="166" x2="214" y2="165" stroke="#888" stroke-width="3"/>
+<!-- 垂直ガイド線 -->
+<line x1="204" y1="55" x2="204" y2="155" stroke="#2196F3" stroke-width="1" stroke-dasharray="5,4" opacity="0.7"/>
+<text x="214" y="105" fill="#2196F3" font-size="9" font-family="sans-serif">垂直</text>
+<rect x="5" y="3" width="310" height="30" rx="4" fill="#2D2D2D" opacity="0.9"/>
+<text x="160" y="13" text-anchor="middle" fill="#FFD700" font-size="10" font-family="sans-serif" font-weight="bold">姿勢３（代替・スペース不足時）</text>
+<text x="160" y="26" text-anchor="middle" fill="#A0A0A0" font-size="8" font-family="sans-serif">バケットシリンダ:ダンプエンド ／ アーム角度:ほぼ垂直 ／ バケット接地</text>
+</svg>"""
+
+_SVG4 = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200">
+<rect width="320" height="200" fill="#1A1A1A"/>
+<rect x="0" y="165" width="320" height="35" fill="#2D2D2D"/>
+<line x1="0" y1="165" x2="320" y2="165" stroke="#666" stroke-width="2"/>
+<rect x="28" y="157" width="104" height="14" rx="4" fill="#444"/>
+<ellipse cx="50" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<ellipse cx="110" cy="164" rx="20" ry="7" fill="#333" stroke="#555" stroke-width="1"/>
+<rect x="35" y="128" width="95" height="32" rx="4" fill="#FFD700"/>
+<rect x="42" y="118" width="80" height="16" rx="3" fill="#E6C200"/>
+<rect x="75" y="110" width="6" height="10" fill="#888"/>
+<rect x="70" y="107" width="16" height="4" rx="1" fill="#999"/>
+<!-- ブーム（高め） -->
+<line x1="122" y1="128" x2="195" y2="55" stroke="#FFD700" stroke-width="11" stroke-linecap="round"/>
+<!-- アーム（引き込み） -->
+<line x1="195" y1="55" x2="185" y2="138" stroke="#E0B800" stroke-width="9" stroke-linecap="round"/>
+<!-- バケット（引き寄せ） -->
+<polygon points="185,138 172,162 150,152 160,128" fill="#CC9900" stroke="#AA7700" stroke-width="2"/>
+<line x1="153" y1="155" x2="149" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="163" y1="160" x2="159" y2="165" stroke="#888" stroke-width="3"/>
+<line x1="173" y1="163" x2="169" y2="165" stroke="#888" stroke-width="3"/>
+<rect x="5" y="3" width="310" height="30" rx="4" fill="#2D2D2D" opacity="0.9"/>
+<text x="160" y="13" text-anchor="middle" fill="#FFD700" font-size="10" font-family="sans-serif" font-weight="bold">姿勢４（ブーム高め・アーム引き込み）</text>
+<text x="160" y="26" text-anchor="middle" fill="#A0A0A0" font-size="8" font-family="sans-serif">ブーム高め ／ アーム引き込み ／ バケット接地</text>
+</svg>"""
+
+POSTURE_SVGS = [
+    base64.b64encode(_SVG1.encode()).decode(),
+    base64.b64encode(_SVG2.encode()).decode(),
+    base64.b64encode(_SVG3.encode()).decode(),
+    base64.b64encode(_SVG4.encode()).decode(),
+]
+
+POSTURE_DESCS = [
+    "バケットシリンダ:ダンプエンド ／ アームシリンダ:ダンプエンド ／ バケット接地（標準推奨姿勢）",
+    "ブームを上げ気味 ／ アームシリンダ:ダンプエンド ／ バケット接地（スペース確保姿勢）",
+    "バケットシリンダ:ダンプエンド ／ アーム角度ほぼ垂直 ／ バケット接地（スペース不足時のみ）",
+    "ブーム高め ／ アーム引き込み気味 ／ バケット接地（引き寄せ姿勢）",
+]
+
 
 st.set_page_config(
     page_title="SC 3Dマシンガイダンス 刃先精度確認",
@@ -525,9 +651,6 @@ elif page == "刃先座標チェック":
 
     THRESHOLD = 0.05
 
-    if "posture_images" not in st.session_state:
-        st.session_state.posture_images = [None, None, None, None]
-
     for i, row in enumerate(st.session_state.blade_results):
         with st.container():
             st.markdown(
@@ -579,36 +702,15 @@ elif page == "刃先座標チェック":
                     pass
 
             with col_img:
-                st.markdown(f"**📷 姿勢{i+1} 作業機写真**")
+                st.markdown(f"**🦾 姿勢{i+1} 作業機姿勢（例）**")
                 st.markdown(
-                    "<div style='font-size:0.78rem;color:var(--text-secondary);margin-bottom:6px;'>"
-                    "全体および作業機接地部が分かる写真をアップロード</div>",
+                    f'<div style="border-radius:8px;overflow:hidden;background:#111;">'
+                    f'<img src="data:image/svg+xml;base64,{POSTURE_SVGS[i]}" '
+                    f'style="width:100%;display:block;" alt="姿勢{i+1}"/></div>'
+                    f'<div style="font-size:0.78rem;color:var(--text-secondary);margin-top:6px;">'
+                    f'{POSTURE_DESCS[i]}</div>',
                     unsafe_allow_html=True
                 )
-                uploaded = st.file_uploader(
-                    f"姿勢{i+1}の写真",
-                    type=["jpg", "jpeg", "png"],
-                    key=f"img_{i}",
-                    label_visibility="collapsed"
-                )
-                if uploaded is not None:
-                    st.session_state.posture_images[i] = uploaded.read()
-
-                if st.session_state.posture_images[i] is not None:
-                    st.image(
-                        st.session_state.posture_images[i],
-                        caption=f"姿勢{i+1} 作業機姿勢",
-                        use_container_width=True
-                    )
-                    st.markdown('<span class="badge badge-ok">📷 画像登録済み</span>', unsafe_allow_html=True)
-                else:
-                    st.markdown(
-                        "<div style='border:2px dashed #444;border-radius:8px;"
-                        "padding:32px;text-align:center;color:#A0A0A0;'>"
-                        "📷<br><span style='font-size:0.85rem;'>写真をアップロード</span><br>"
-                        "<span style='font-size:0.75rem;'>JPG / PNG</span></div>",
-                        unsafe_allow_html=True
-                    )
 
     # 傾向分析
     st.markdown("---")
@@ -747,24 +849,17 @@ elif page == "サマリー・レポート":
 
     st.markdown(rows_html + "</table>", unsafe_allow_html=True)
 
-    # 作業機姿勢画像サマリー
-    st.markdown("### 📷 作業機姿勢画像")
-    imgs = st.session_state.get("posture_images", [None, None, None, None])
-    if any(img is not None for img in imgs):
-        img_cols = st.columns(4)
-        for i, (col, img) in enumerate(zip(img_cols, imgs)):
-            with col:
-                if img is not None:
-                    st.image(img, caption=f"姿勢 {i+1}", use_container_width=True)
-                    st.markdown('<span class="badge badge-ok">📷 登録済み</span>', unsafe_allow_html=True)
-                else:
-                    st.markdown(
-                        f"<div style='border:2px dashed #444;border-radius:8px;padding:24px;"
-                        f"text-align:center;color:#A0A0A0;'>📷<br><small>姿勢{i+1} 未登録</small></div>",
-                        unsafe_allow_html=True
-                    )
-    else:
-        st.markdown('<div class="info-box">💡 刃先座標チェックページで各姿勢の写真をアップロードすると、ここに表示されます</div>', unsafe_allow_html=True)
+    # 作業機姿勢図サマリー
+    st.markdown("### 🦾 作業機姿勢（例示図）")
+    img_cols = st.columns(4)
+    for i, col in enumerate(img_cols):
+        with col:
+            st.markdown(
+                f'<div style="border-radius:8px;overflow:hidden;background:#111;margin-bottom:4px;">'
+                f'<img src="data:image/svg+xml;base64,{POSTURE_SVGS[i]}" style="width:100%;display:block;"/></div>'
+                f'<div style="font-size:0.72rem;color:#A0A0A0;text-align:center;">{POSTURE_DESCS[i]}</div>',
+                unsafe_allow_html=True
+            )
 
 
     # JSONダウンロード
