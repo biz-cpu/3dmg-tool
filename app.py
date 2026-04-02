@@ -69,6 +69,14 @@ h1, h2, h3 { font-family: 'Noto Sans JP', sans-serif !important; font-weight: 70
     color: var(--text-primary) !important; border-radius: 6px !important;
     font-family: 'JetBrains Mono', monospace !important;
 }
+.stTextInput label, .stNumberInput label, .stSelectbox label,
+[data-testid="stTextInput"] label, [data-testid="stNumberInput"] label {
+    color: #D0D0D0 !important; font-size: 0.88rem !important;
+    font-weight: 500 !important; opacity: 1 !important;
+}
+.stTextInput input::placeholder, .stNumberInput input::placeholder {
+    color: #888 !important; opacity: 1 !important;
+}
 [data-testid="stCheckbox"] label { color: var(--text-primary) !important; font-size: 0.9rem !important; }
 
 .stButton > button {
