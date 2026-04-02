@@ -703,197 +703,192 @@ elif page == "診断フローチャート":
     st.markdown("---")
     st.markdown("### 📊 診断フロー全体図")
     st.markdown("""
-    <div style="background:#1e1e1e;border:1px solid #444;border-radius:10px;padding:20px;overflow-x:auto;">
-    <svg viewBox="0 0 780 1120" xmlns="http://www.w3.org/2000/svg"
-         style="width:100%;min-width:680px;font-family:'Noto Sans JP',sans-serif;">
+    <div style="background:#1e1e1e;border:1px solid #444;border-radius:10px;padding:16px;overflow-x:auto;">
+    <svg viewBox="0 0 800 1040" xmlns="http://www.w3.org/2000/svg"
+         style="width:100%;min-width:700px;font-family:'Noto Sans JP',sans-serif;">
       <defs>
-        <marker id="arr"   markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#888"/></marker>
-        <marker id="arr_y" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00C853"/></marker>
-        <marker id="arr_n" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#FF3D3D"/></marker>
-        <marker id="arr_o" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#FF9800"/></marker>
+        <marker id="a0" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#888"/></marker>
+        <marker id="ay" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#00C853"/></marker>
+        <marker id="an" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#FF3D3D"/></marker>
+        <marker id="ao" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#FF9800"/></marker>
       </defs>
 
-      <!-- =========================================================
-           列定義（中心X）
-           左ブランチ:   x=100
-           メイン縦軸:   x=390
-           右リーフ:     x=650
-      ========================================================= -->
+      <!-- ====================== START ====================== -->
+      <rect x="200" y="16" width="400" height="42" rx="21" fill="#CC2222"/>
+      <text x="400" y="42" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">刃先精度が±5cm以内に収まらない</text>
+      <line x1="400" y1="58" x2="400" y2="82" stroke="#888" stroke-width="2" marker-end="url(#a0)"/>
 
-      <!-- ── START ───────────────────────────────────────────── -->
-      <rect x="215" y="20" width="350" height="44" rx="22" fill="#FF3D3D" opacity="0.9"/>
-      <text x="390" y="47" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">刃先精度が±5cm以内に収まらない</text>
+      <!-- =================== Q1: GNSS FIX? ================ -->
+      <!-- center (400,120), hw=155, hh=38 -->
+      <polygon points="400,82 555,120 400,158 245,120" fill="#252525" stroke="#FFD700" stroke-width="2"/>
+      <text x="400" y="114" text-anchor="middle" font-size="12" fill="#FFD700">GNSSステータスは</text>
+      <text x="400" y="132" text-anchor="middle" font-size="12" fill="#FFD700">緑色（FIX）ですか？</text>
 
-      <line x1="390" y1="64" x2="390" y2="94" stroke="#888" stroke-width="2" marker-end="url(#arr)"/>
+      <!-- Q1 YES: 右へ → バイパスラインで Q3へ (x=700ガイド) -->
+      <line x1="555" y1="120" x2="700" y2="120" stroke="#00C853" stroke-width="1.5"/>
+      <line x1="700" y1="120" x2="700" y2="390" stroke="#00C853" stroke-width="1.5"/>
+      <line x1="700" y1="390" x2="555" y2="390" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="628" y="113" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
 
-      <!-- ── Q1: GNSS FIX? ──────────────────────────────────── -->
-      <!-- diamond center (390,130), half-w=155, half-h=36 -->
-      <polygon points="390,94 545,130 390,166 235,130" fill="#2D2D2D" stroke="#FFD700" stroke-width="2"/>
-      <text x="390" y="124" text-anchor="middle" font-size="12" fill="#FFD700">GNSSステータスは</text>
-      <text x="390" y="142" text-anchor="middle" font-size="12" fill="#FFD700">緑色（FIX）ですか？</text>
+      <!-- Q1 NO: 下へ -->
+      <line x1="400" y1="158" x2="400" y2="184" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="416" y="177" font-size="11" fill="#FF3D3D">NO</text>
 
-      <!-- YES → 右へ → 下へ Q3へ（x=700のガイドライン）-->
-      <line x1="545" y1="130" x2="700" y2="130" stroke="#00C853" stroke-width="1.5"/>
-      <line x1="700" y1="130" x2="700" y2="410" stroke="#00C853" stroke-width="1.5"/>
-      <line x1="700" y1="410" x2="545" y2="410" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="622" y="122" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
+      <!-- ============= Q2: 補正受信? ====================== -->
+      <!-- center (400,222), hw=140, hh=38 -->
+      <polygon points="400,184 540,222 400,260 260,222" fill="#252525" stroke="#FFD700" stroke-width="2"/>
+      <text x="400" y="216" text-anchor="middle" font-size="12" fill="#FFD700">補正情報は</text>
+      <text x="400" y="234" text-anchor="middle" font-size="12" fill="#FFD700">受信できていますか？</text>
 
-      <!-- NO ↓ -->
-      <line x1="390" y1="166" x2="390" y2="196" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="406" y="186" font-size="11" fill="#FF3D3D">NO</text>
+      <!-- Q2 YES: 右リーフ FIX不可 -->
+      <line x1="540" y1="222" x2="596" y2="222" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="568" y="215" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
+      <rect x="598" y="202" width="160" height="44" rx="6" fill="#550000" stroke="#FF3D3D" stroke-width="1.5"/>
+      <text x="678" y="221" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 FIX不可</text>
+      <text x="678" y="238" text-anchor="middle" font-size="11" fill="#FF3D3D">上空・環境・障害物確認</text>
 
-      <!-- ── Q2: 補正受信? ──────────────────────────────────── -->
-      <polygon points="390,196 530,228 390,260 250,228" fill="#2D2D2D" stroke="#FFD700" stroke-width="2"/>
-      <text x="390" y="222" text-anchor="middle" font-size="12" fill="#FFD700">補正情報は</text>
-      <text x="390" y="240" text-anchor="middle" font-size="12" fill="#FFD700">受信できていますか？</text>
+      <!-- Q2 NO: 下へ リーフ -->
+      <line x1="400" y1="260" x2="400" y2="286" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="416" y="279" font-size="11" fill="#FF3D3D">NO</text>
+      <rect x="240" y="286" width="320" height="48" rx="6" fill="#550000" stroke="#FF3D3D" stroke-width="1.5"/>
+      <text x="400" y="307" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 補正情報が届いていない</text>
+      <text x="400" y="324" text-anchor="middle" font-size="11" fill="#FF3D3D">SIM / Ntrip / 固定局 / 無線機を確認</text>
 
-      <!-- YES → 右リーフ: FIX不可 -->
-      <line x1="530" y1="228" x2="600" y2="228" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="565" y="221" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
-      <rect x="602" y="208" width="156" height="44" rx="6" fill="#FF3D3D" opacity="0.2" stroke="#FF3D3D" stroke-width="1.5"/>
-      <text x="680" y="228" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 FIX不可</text>
-      <text x="680" y="244" text-anchor="middle" font-size="11" fill="#FF3D3D">上空・環境・障害物確認</text>
+      <!-- gap: リーフ下端(334) → Q3上端(352) -->
+      <line x1="400" y1="334" x2="400" y2="352" stroke="none"/>
 
-      <!-- NO ↓ リーフ: 補正なし -->
-      <line x1="390" y1="260" x2="390" y2="288" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="406" y="280" font-size="11" fill="#FF3D3D">NO</text>
-      <rect x="240" y="288" width="300" height="44" rx="6" fill="#FF3D3D" opacity="0.2" stroke="#FF3D3D" stroke-width="1.5"/>
-      <text x="390" y="308" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 補正情報が届いていない</text>
-      <text x="390" y="324" text-anchor="middle" font-size="11" fill="#FF3D3D">SIM / Ntrip / 固定局 / 無線機を確認</text>
+      <!-- ========= Q3: 誤差が姿勢によらず一定? ============ -->
+      <!-- center (400,390), hw=155, hh=38 -->
+      <polygon points="400,352 555,390 400,428 245,390" fill="#252525" stroke="#FFD700" stroke-width="2"/>
+      <text x="400" y="384" text-anchor="middle" font-size="12" fill="#FFD700">誤差の方向・大きさが</text>
+      <text x="400" y="402" text-anchor="middle" font-size="12" fill="#FFD700">姿勢によらず一定ですか？</text>
 
-      <!-- ── Q3: 誤差が姿勢によらず一定? ──────────────────── -->
-      <polygon points="390,370 545,410 390,450 235,410" fill="#2D2D2D" stroke="#FFD700" stroke-width="2"/>
-      <text x="390" y="404" text-anchor="middle" font-size="12" fill="#FFD700">誤差の方向・大きさが</text>
-      <text x="390" y="422" text-anchor="middle" font-size="12" fill="#FFD700">姿勢によらず一定ですか？</text>
+      <!-- Q3 YES: 下へ Q4 -->
+      <line x1="400" y1="428" x2="400" y2="454" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="416" y="447" font-size="11" fill="#00C853">YES</text>
 
-      <!-- ラベル（YESはQ1から来た矢印の先） -->
-      <line x1="390" y1="370" x2="390" y2="350" stroke="none"/><!-- spacer -->
+      <!-- Q3 NO: 左ブランチ (x=130) -->
+      <line x1="245" y1="390" x2="130" y2="390" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="182" y="382" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
 
-      <!-- YES ↓ Q4へ -->
-      <line x1="390" y1="450" x2="390" y2="480" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="406" y="470" font-size="11" fill="#00C853">YES</text>
+      <!-- ===== 左ブランチ (x=130) ========================= -->
+      <!-- Q_RAND center (130,390): hw=90,hh=30 共有Y -->
+      <polygon points="130,390 220,420 130,450 40,420" fill="#252525" stroke="#FFD700" stroke-width="1.5"/>
+      <text x="130" y="414" text-anchor="middle" font-size="11" fill="#FFD700">誤差の方向が</text>
+      <text x="130" y="430" text-anchor="middle" font-size="11" fill="#FFD700">バラバラですか？</text>
 
-      <!-- NO → 左ブランチへ -->
-      <line x1="235" y1="410" x2="120" y2="410" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="172" y="402" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
+      <!-- RAND YES: 下へ Q_IMU -->
+      <line x1="130" y1="450" x2="130" y2="476" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="144" y="469" font-size="11" fill="#00C853">YES</text>
 
-      <!-- ============ 左ブランチ（x=120中心） ================ -->
+      <!-- Q_IMU center (130,514): hw=90,hh=30 -->
+      <polygon points="130,476 220,506 130,536 40,506" fill="#252525" stroke="#FFD700" stroke-width="1.5"/>
+      <text x="130" y="500" text-anchor="middle" font-size="11" fill="#FFD700">作業機の追従は</text>
+      <text x="130" y="516" text-anchor="middle" font-size="11" fill="#FFD700">正確ですか？</text>
 
-      <!-- Q_RANDOM: バラバラ? -->
-      <polygon points="120,410 210,440 120,470 30,440" fill="#2D2D2D" stroke="#FFD700" stroke-width="1.5"/>
-      <text x="120" y="434" text-anchor="middle" font-size="11" fill="#FFD700">誤差の方向が</text>
-      <text x="120" y="450" text-anchor="middle" font-size="11" fill="#FFD700">バラバラですか？</text>
+      <!-- IMU NO: 下へ リーフ -->
+      <line x1="130" y1="536" x2="130" y2="562" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="144" y="554" font-size="11" fill="#FF3D3D">NO</text>
+      <rect x="42" y="562" width="176" height="44" rx="6" fill="#550000" stroke="#FF3D3D" stroke-width="1.5"/>
+      <text x="130" y="581" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 IMUセンサ不良</text>
+      <text x="130" y="597" text-anchor="middle" font-size="11" fill="#FF3D3D">取付・ハーネス確認</text>
 
-      <!-- YES ↓ -->
-      <line x1="120" y1="470" x2="120" y2="500" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="134" y="490" font-size="11" fill="#00C853">YES</text>
+      <!-- IMU YES: 右 マルチパス (メインラインと重ならない範囲) -->
+      <line x1="220" y1="506" x2="246" y2="506" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="233" y="499" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
+      <rect x="248" y="486" width="180" height="44" rx="6" fill="#443300" stroke="#FF9800" stroke-width="1.5"/>
+      <text x="338" y="505" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 マルチパス・環境ノイズ</text>
+      <text x="338" y="521" text-anchor="middle" font-size="11" fill="#FF9800">場所移動・PDOP確認</text>
 
-      <!-- Q_IMU: 作業機追従は正確? -->
-      <polygon points="120,500 210,530 120,560 30,530" fill="#2D2D2D" stroke="#FFD700" stroke-width="1.5"/>
-      <text x="120" y="524" text-anchor="middle" font-size="11" fill="#FFD700">作業機の追従は</text>
-      <text x="120" y="540" text-anchor="middle" font-size="11" fill="#FFD700">正確ですか？</text>
+      <!-- RAND NO: 左端 → 下 → PJリーフ -->
+      <line x1="40" y1="420" x2="10" y2="420" stroke="#FF3D3D" stroke-width="1.5"/>
+      <line x1="10" y1="420" x2="10" y2="660" stroke="#FF3D3D" stroke-width="1.5"/>
+      <line x1="10" y1="660" x2="42" y2="660" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="22" y="418" font-size="10" fill="#FF3D3D">NO</text>
+      <rect x="44" y="640" width="195" height="44" rx="6" fill="#443300" stroke="#FF9800" stroke-width="1.5"/>
+      <text x="141" y="659" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル・設定確認</text>
+      <text x="141" y="675" text-anchor="middle" font-size="11" fill="#FF9800">ローカライゼーション再実施</text>
 
-      <!-- NO ↓ リーフ IMU不良 -->
-      <line x1="120" y1="560" x2="120" y2="590" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="134" y="580" font-size="11" fill="#FF3D3D">NO</text>
-      <rect x="30" y="590" width="180" height="44" rx="6" fill="#FF3D3D" opacity="0.2" stroke="#FF3D3D" stroke-width="1.5"/>
-      <text x="120" y="610" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 IMUセンサ不良</text>
-      <text x="120" y="626" text-anchor="middle" font-size="11" fill="#FF3D3D">取付・ハーネス確認</text>
+      <!-- ========= Q4: Z方向系統誤差? ==================== -->
+      <!-- center (400,492), hw=150, hh=38 -->
+      <polygon points="400,454 550,492 400,530 250,492" fill="#252525" stroke="#FFD700" stroke-width="2"/>
+      <text x="400" y="486" text-anchor="middle" font-size="12" fill="#FFD700">Z方向（高さ）に</text>
+      <text x="400" y="504" text-anchor="middle" font-size="12" fill="#FFD700">系統誤差がありますか？</text>
 
-      <!-- YES → 右リーフ マルチパス -->
-      <line x1="210" y1="530" x2="260" y2="530" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="235" y="522" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
-      <rect x="262" y="510" width="190" height="44" rx="6" fill="#FF9800" opacity="0.2" stroke="#FF9800" stroke-width="1.5"/>
-      <text x="357" y="530" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 マルチパス・環境ノイズ</text>
-      <text x="357" y="546" text-anchor="middle" font-size="11" fill="#FF9800">場所移動・PDOP確認</text>
+      <!-- Q4 YES: 下へ Q5 -->
+      <line x1="400" y1="530" x2="400" y2="556" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="416" y="549" font-size="11" fill="#00C853">YES</text>
 
-      <!-- RANDOM NO → リーフ PJファイル -->
-      <line x1="30" y1="440" x2="0" y2="440" stroke="#FF3D3D" stroke-width="1.5"/>
-      <line x1="0"  y1="440" x2="0"  y2="700" stroke="#FF3D3D" stroke-width="1.5"/>
-      <line x1="0"  y1="700" x2="30" y2="700" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="-14" y="570" text-anchor="middle" font-size="11" fill="#FF3D3D" transform="rotate(-90,-14,570)">NO</text>
-      <rect x="30" y="678" width="195" height="44" rx="6" fill="#FF9800" opacity="0.2" stroke="#FF9800" stroke-width="1.5"/>
-      <text x="127" y="698" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル・設定確認</text>
-      <text x="127" y="714" text-anchor="middle" font-size="11" fill="#FF9800">ローカライゼーション再実施</text>
+      <!-- Q4 NO: 右バイパス → Q6 (x=715ガイド) -->
+      <line x1="550" y1="492" x2="715" y2="492" stroke="#FF3D3D" stroke-width="1.5"/>
+      <line x1="715" y1="492" x2="715" y2="730" stroke="#FF3D3D" stroke-width="1.5"/>
+      <line x1="715" y1="730" x2="550" y2="730" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="633" y="485" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
 
-      <!-- ============ メインブランチ再開 Q4 ================== -->
+      <!-- ========= Q5: バケット正確? ==================== -->
+      <!-- center (400,594), hw=140, hh=38 -->
+      <polygon points="400,556 540,594 400,632 260,594" fill="#252525" stroke="#FFD700" stroke-width="1.5"/>
+      <text x="400" y="588" text-anchor="middle" font-size="12" fill="#FFD700">バケットファイル・</text>
+      <text x="400" y="606" text-anchor="middle" font-size="12" fill="#FFD700">ツース長は正確ですか？</text>
 
-      <!-- Q4: Z方向系統誤差? -->
-      <polygon points="390,480 545,518 390,556 235,518" fill="#2D2D2D" stroke="#FFD700" stroke-width="2"/>
-      <text x="390" y="512" text-anchor="middle" font-size="12" fill="#FFD700">Z方向（高さ）に</text>
-      <text x="390" y="530" text-anchor="middle" font-size="12" fill="#FFD700">系統誤差がありますか？</text>
+      <!-- Q5 NO: 下へ リーフ -->
+      <line x1="400" y1="632" x2="400" y2="658" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="416" y="651" font-size="11" fill="#FF3D3D">NO</text>
+      <rect x="255" y="658" width="290" height="44" rx="6" fill="#550000" stroke="#FF3D3D" stroke-width="1.5"/>
+      <text x="400" y="677" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 バケット設定誤り</text>
+      <text x="400" y="693" text-anchor="middle" font-size="11" fill="#FF3D3D">ツース長・寸法を修正</text>
 
-      <!-- YES ↓ Q5 -->
-      <line x1="390" y1="556" x2="390" y2="586" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="406" y="576" font-size="11" fill="#00C853">YES</text>
+      <!-- Q5 YES: 右リーフ GNSS高さ -->
+      <line x1="540" y1="594" x2="596" y2="594" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="568" y="587" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
+      <rect x="598" y="574" width="165" height="44" rx="6" fill="#443300" stroke="#FF9800" stroke-width="1.5"/>
+      <text x="680" y="593" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 GNSS高さ精度</text>
+      <text x="680" y="609" text-anchor="middle" font-size="11" fill="#FF9800">垂直RMS・PJ確認</text>
 
-      <!-- NO → 右回りで Q6へ -->
-      <line x1="545" y1="518" x2="710" y2="518" stroke="#FF3D3D" stroke-width="1.5"/>
-      <line x1="710" y1="518" x2="710" y2="726" stroke="#FF3D3D" stroke-width="1.5"/>
-      <line x1="710" y1="726" x2="545" y2="726" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="628" y="510" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
+      <!-- ========= Q6: N/E方向系統誤差? ================= -->
+      <!-- center (400,768), hw=150, hh=38 -->
+      <polygon points="400,730 550,768 400,806 250,768" fill="#252525" stroke="#FFD700" stroke-width="2"/>
+      <text x="400" y="762" text-anchor="middle" font-size="12" fill="#FFD700">N/E方向（前後左右）に</text>
+      <text x="400" y="780" text-anchor="middle" font-size="12" fill="#FFD700">系統誤差がありますか？</text>
 
-      <!-- Q5: バケット正確? -->
-      <polygon points="390,586 530,618 390,650 250,618" fill="#2D2D2D" stroke="#FFD700" stroke-width="1.5"/>
-      <text x="390" y="612" text-anchor="middle" font-size="12" fill="#FFD700">バケットファイル・</text>
-      <text x="390" y="630" text-anchor="middle" font-size="12" fill="#FFD700">ツース長は正確ですか？</text>
+      <!-- Q6 YES: 下へ Q7 -->
+      <line x1="400" y1="806" x2="400" y2="832" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="416" y="825" font-size="11" fill="#00C853">YES</text>
 
-      <!-- NO ↓ リーフ バケット設定誤り -->
-      <line x1="390" y1="650" x2="390" y2="678" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="406" y="670" font-size="11" fill="#FF3D3D">NO</text>
-      <rect x="255" y="678" width="270" height="44" rx="6" fill="#FF3D3D" opacity="0.2" stroke="#FF3D3D" stroke-width="1.5"/>
-      <text x="390" y="698" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 バケット設定誤り</text>
-      <text x="390" y="714" text-anchor="middle" font-size="11" fill="#FF3D3D">ツース長・寸法を修正</text>
+      <!-- Q6 NO: 右リーフ PJファイル -->
+      <line x1="550" y1="768" x2="596" y2="768" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="573" y="761" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
+      <rect x="598" y="748" width="165" height="44" rx="6" fill="#443300" stroke="#FF9800" stroke-width="1.5"/>
+      <text x="680" y="767" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル誤り</text>
+      <text x="680" y="783" text-anchor="middle" font-size="11" fill="#FF9800">基準点・ローカライゼーション</text>
 
-      <!-- YES → 右リーフ GNSS高さ精度 -->
-      <line x1="530" y1="618" x2="600" y2="618" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="565" y="610" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
-      <rect x="602" y="598" width="166" height="44" rx="6" fill="#FF9800" opacity="0.2" stroke="#FF9800" stroke-width="1.5"/>
-      <text x="685" y="618" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 GNSS高さ精度</text>
-      <text x="685" y="634" text-anchor="middle" font-size="11" fill="#FF9800">垂直RMS・PJ確認</text>
+      <!-- ========= Q7: アンテナ仕様通り? ================ -->
+      <!-- center (400,870), hw=140, hh=38 -->
+      <polygon points="400,832 540,870 400,908 260,870" fill="#252525" stroke="#FFD700" stroke-width="1.5"/>
+      <text x="400" y="864" text-anchor="middle" font-size="12" fill="#FFD700">アンテナ取付位置・向きは</text>
+      <text x="400" y="882" text-anchor="middle" font-size="12" fill="#FFD700">仕様通りですか？</text>
 
-      <!-- Q6: N/E方向系統誤差? -->
-      <polygon points="390,726 545,760 390,794 235,760" fill="#2D2D2D" stroke="#FFD700" stroke-width="2"/>
-      <text x="390" y="754" text-anchor="middle" font-size="12" fill="#FFD700">N/E方向（前後左右）に</text>
-      <text x="390" y="772" text-anchor="middle" font-size="12" fill="#FFD700">系統誤差がありますか？</text>
+      <!-- Q7 NO: 下へ リーフ -->
+      <line x1="400" y1="908" x2="400" y2="934" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#an)"/>
+      <text x="416" y="927" font-size="11" fill="#FF3D3D">NO</text>
+      <rect x="255" y="934" width="290" height="44" rx="6" fill="#550000" stroke="#FF3D3D" stroke-width="1.5"/>
+      <text x="400" y="953" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 アンテナ取付不良</text>
+      <text x="400" y="969" text-anchor="middle" font-size="11" fill="#FF3D3D">位置・向き・ガタ確認</text>
 
-      <!-- YES ↓ Q7 -->
-      <line x1="390" y1="794" x2="390" y2="824" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="406" y="814" font-size="11" fill="#00C853">YES</text>
+      <!-- Q7 YES: 右リーフ PJファイル誤り -->
+      <line x1="540" y1="870" x2="596" y2="870" stroke="#00C853" stroke-width="1.5" marker-end="url(#ay)"/>
+      <text x="568" y="863" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
+      <rect x="598" y="850" width="165" height="44" rx="6" fill="#443300" stroke="#FF9800" stroke-width="1.5"/>
+      <text x="680" y="869" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル誤り</text>
+      <text x="680" y="885" text-anchor="middle" font-size="11" fill="#FF9800">基準点・ローカライゼーション</text>
 
-      <!-- NO → 右リーフ PJファイル -->
-      <line x1="545" y1="760" x2="600" y2="760" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="572" y="752" text-anchor="middle" font-size="11" fill="#FF3D3D">NO</text>
-      <rect x="602" y="740" width="166" height="44" rx="6" fill="#FF9800" opacity="0.2" stroke="#FF9800" stroke-width="1.5"/>
-      <text x="685" y="760" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル誤り</text>
-      <text x="685" y="776" text-anchor="middle" font-size="11" fill="#FF9800">基準点・ローカライゼーション</text>
-
-      <!-- Q7: アンテナ仕様通り? -->
-      <polygon points="390,824 530,856 390,888 250,856" fill="#2D2D2D" stroke="#FFD700" stroke-width="1.5"/>
-      <text x="390" y="850" text-anchor="middle" font-size="12" fill="#FFD700">アンテナ取付位置・向きは</text>
-      <text x="390" y="868" text-anchor="middle" font-size="12" fill="#FFD700">仕様通りですか？</text>
-
-      <!-- NO ↓ リーフ アンテナ不良 -->
-      <line x1="390" y1="888" x2="390" y2="918" stroke="#FF3D3D" stroke-width="1.5" marker-end="url(#arr_n)"/>
-      <text x="406" y="908" font-size="11" fill="#FF3D3D">NO</text>
-      <rect x="255" y="918" width="270" height="44" rx="6" fill="#FF3D3D" opacity="0.2" stroke="#FF3D3D" stroke-width="1.5"/>
-      <text x="390" y="938" text-anchor="middle" font-size="11" fill="#FF3D3D" font-weight="bold">📌 アンテナ取付不良</text>
-      <text x="390" y="954" text-anchor="middle" font-size="11" fill="#FF3D3D">位置・向き・ガタ確認</text>
-
-      <!-- YES → 右リーフ PJファイル誤り -->
-      <line x1="530" y1="856" x2="600" y2="856" stroke="#00C853" stroke-width="1.5" marker-end="url(#arr_y)"/>
-      <text x="565" y="848" text-anchor="middle" font-size="11" fill="#00C853">YES</text>
-      <rect x="602" y="836" width="166" height="44" rx="6" fill="#FF9800" opacity="0.2" stroke="#FF9800" stroke-width="1.5"/>
-      <text x="685" y="856" text-anchor="middle" font-size="11" fill="#FF9800" font-weight="bold">📌 PJファイル誤り</text>
-      <text x="685" y="872" text-anchor="middle" font-size="11" fill="#FF9800">基準点・ローカライゼーション</text>
-
-      <!-- ── 凡例 ────────────────────────────────────────────── -->
-      <rect x="220" y="990" width="14" height="14" fill="#FFD700"/>
-      <text x="240" y="1003" font-size="11" fill="#aaa">判断分岐</text>
-      <rect x="340" y="990" width="14" height="14" fill="#FF3D3D" opacity="0.5"/>
-      <text x="360" y="1003" font-size="11" fill="#aaa">原因（赤）</text>
-      <rect x="460" y="990" width="14" height="14" fill="#FF9800" opacity="0.5"/>
-      <text x="480" y="1003" font-size="11" fill="#aaa">原因（橙）</text>
+      <!-- ── 凡例 ─────────────────────────────────────────── -->
+      <rect x="220" y="1008" width="14" height="14" fill="#FFD700"/>
+      <text x="240" y="1020" font-size="11" fill="#aaa">判断分岐</text>
+      <rect x="330" y="1008" width="14" height="14" fill="#FF3D3D" opacity="0.7"/>
+      <text x="350" y="1020" font-size="11" fill="#aaa">原因（赤）</text>
+      <rect x="440" y="1008" width="14" height="14" fill="#FF9800" opacity="0.7"/>
+      <text x="460" y="1020" font-size="11" fill="#aaa">原因（橙）</text>
     </svg>
     </div>
     """, unsafe_allow_html=True)
