@@ -515,74 +515,69 @@ elif page == "刃先座標チェック":
     # 作業機姿勢 SVG図
     st.markdown("**🦾 作業機姿勢 参考図（姿勢1〜4）**")
     st.markdown("""
-    <div style="background:#f8f8f8;border-radius:8px;padding:16px;margin-bottom:12px;overflow-x:auto;">
-    <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;">
-      <defs>
-        <marker id="ah" markerWidth="6" markerHeight="4" refX="6" refY="2" orient="auto">
-          <polygon points="0 0, 6 2, 0 4" fill="#555"/>
-        </marker>
-      </defs>
+    <div style="background:#2D2D2D;border:1px solid #444;border-radius:8px;padding:16px;margin-bottom:12px;overflow-x:auto;">
+    <svg viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;">
       <!-- 地面ライン -->
-      <line x1="0" y1="175" x2="900" y2="175" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="0" y1="175" x2="900" y2="175" stroke="#666" stroke-width="1" stroke-dasharray="4,3"/>
 
       <!-- ===== 姿勢1 ===== -->
-      <text x="112" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">姿勢１（標準）</text>
+      <text x="112" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#FFD700">姿勢１（標準）</text>
       <!-- 機体 -->
-      <rect x="60" y="130" width="100" height="40" rx="4" fill="#BDBDBD" stroke="#555" stroke-width="1.5"/>
+      <rect x="60" y="130" width="100" height="40" rx="4" fill="#4A4A4A" stroke="#888" stroke-width="1.5"/>
       <!-- キャビン -->
-      <rect x="120" y="110" width="36" height="22" rx="3" fill="#90A4AE" stroke="#555" stroke-width="1"/>
+      <rect x="120" y="110" width="36" height="22" rx="3" fill="#546E7A" stroke="#888" stroke-width="1"/>
       <!-- ブーム -->
-      <line x1="152" y1="130" x2="185" y2="85" stroke="#795548" stroke-width="5" stroke-linecap="round"/>
+      <line x1="152" y1="130" x2="185" y2="85" stroke="#FFAB40" stroke-width="5" stroke-linecap="round"/>
       <!-- アーム -->
-      <line x1="185" y1="85" x2="200" y2="145" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+      <line x1="185" y1="85" x2="200" y2="145" stroke="#FF8F00" stroke-width="4" stroke-linecap="round"/>
       <!-- バケット -->
-      <polyline points="200,145 215,155 210,175" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+      <polyline points="200,145 215,155 210,175" fill="none" stroke="#F0F0F0" stroke-width="3" stroke-linecap="round"/>
       <!-- 刃先 -->
-      <circle cx="210" cy="175" r="3" fill="#FF3D3D"/>
+      <circle cx="210" cy="175" r="4" fill="#FF3D3D"/>
       <!-- ラベル -->
-      <text x="112" y="194" text-anchor="middle" font-size="9" fill="#555">バケット・アームともダンプ</text>
+      <text x="112" y="196" text-anchor="middle" font-size="9" fill="#A0A0A0">バケット・アームともダンプ</text>
 
       <!-- ===== 姿勢2 ===== -->
-      <text x="337" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">姿勢２（ブーム上げ）</text>
-      <rect x="280" y="130" width="100" height="40" rx="4" fill="#BDBDBD" stroke="#555" stroke-width="1.5"/>
-      <rect x="340" y="110" width="36" height="22" rx="3" fill="#90A4AE" stroke="#555" stroke-width="1"/>
+      <text x="337" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#FFD700">姿勢２（ブーム上げ）</text>
+      <rect x="280" y="130" width="100" height="40" rx="4" fill="#4A4A4A" stroke="#888" stroke-width="1.5"/>
+      <rect x="340" y="110" width="36" height="22" rx="3" fill="#546E7A" stroke="#888" stroke-width="1"/>
       <!-- ブーム高め -->
-      <line x1="372" y1="128" x2="395" y2="65" stroke="#795548" stroke-width="5" stroke-linecap="round"/>
+      <line x1="372" y1="128" x2="395" y2="65" stroke="#FFAB40" stroke-width="5" stroke-linecap="round"/>
       <!-- アーム ダンプ気味 -->
-      <line x1="395" y1="65" x2="418" y2="135" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+      <line x1="395" y1="65" x2="418" y2="135" stroke="#FF8F00" stroke-width="4" stroke-linecap="round"/>
       <!-- バケット -->
-      <polyline points="418,135 432,148 428,175" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="428" cy="175" r="3" fill="#FF3D3D"/>
-      <text x="337" y="194" text-anchor="middle" font-size="9" fill="#555">ブーム上げ・スペース確保</text>
+      <polyline points="418,135 432,148 428,175" fill="none" stroke="#F0F0F0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="428" cy="175" r="4" fill="#FF3D3D"/>
+      <text x="337" y="196" text-anchor="middle" font-size="9" fill="#A0A0A0">ブーム上げ・スペース確保</text>
 
       <!-- ===== 姿勢3 ===== -->
-      <text x="562" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">姿勢３（アーム垂直）</text>
-      <rect x="505" y="130" width="100" height="40" rx="4" fill="#BDBDBD" stroke="#555" stroke-width="1.5"/>
-      <rect x="565" y="110" width="36" height="22" rx="3" fill="#90A4AE" stroke="#555" stroke-width="1"/>
+      <text x="562" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#FFD700">姿勢３（アーム垂直）</text>
+      <rect x="505" y="130" width="100" height="40" rx="4" fill="#4A4A4A" stroke="#888" stroke-width="1.5"/>
+      <rect x="565" y="110" width="36" height="22" rx="3" fill="#546E7A" stroke="#888" stroke-width="1"/>
       <!-- ブーム普通 -->
-      <line x1="597" y1="128" x2="620" y2="80" stroke="#795548" stroke-width="5" stroke-linecap="round"/>
+      <line x1="597" y1="128" x2="620" y2="80" stroke="#FFAB40" stroke-width="5" stroke-linecap="round"/>
       <!-- アーム ほぼ垂直 -->
-      <line x1="620" y1="80" x2="622" y2="148" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+      <line x1="620" y1="80" x2="622" y2="148" stroke="#FF8F00" stroke-width="4" stroke-linecap="round"/>
       <!-- バケット -->
-      <polyline points="622,148 635,158 630,175" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="630" cy="175" r="3" fill="#FF3D3D"/>
-      <text x="562" y="194" text-anchor="middle" font-size="9" fill="#555">アーム垂直・スペース不足時</text>
+      <polyline points="622,148 635,158 630,175" fill="none" stroke="#F0F0F0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="630" cy="175" r="4" fill="#FF3D3D"/>
+      <text x="562" y="196" text-anchor="middle" font-size="9" fill="#A0A0A0">アーム垂直・スペース不足時</text>
 
       <!-- ===== 姿勢4 ===== -->
-      <text x="787" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#333">姿勢４（引き寄せ）</text>
-      <rect x="730" y="130" width="100" height="40" rx="4" fill="#BDBDBD" stroke="#555" stroke-width="1.5"/>
-      <rect x="790" y="110" width="36" height="22" rx="3" fill="#90A4AE" stroke="#555" stroke-width="1"/>
+      <text x="787" y="14" text-anchor="middle" font-size="11" font-weight="bold" fill="#FFD700">姿勢４（引き寄せ）</text>
+      <rect x="730" y="130" width="100" height="40" rx="4" fill="#4A4A4A" stroke="#888" stroke-width="1.5"/>
+      <rect x="790" y="110" width="36" height="22" rx="3" fill="#546E7A" stroke="#888" stroke-width="1"/>
       <!-- ブーム高め -->
-      <line x1="822" y1="125" x2="840" y2="60" stroke="#795548" stroke-width="5" stroke-linecap="round"/>
+      <line x1="822" y1="125" x2="840" y2="60" stroke="#FFAB40" stroke-width="5" stroke-linecap="round"/>
       <!-- アーム 引き込み -->
-      <line x1="840" y1="60" x2="825" y2="130" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+      <line x1="840" y1="60" x2="825" y2="130" stroke="#FF8F00" stroke-width="4" stroke-linecap="round"/>
       <!-- バケット -->
-      <polyline points="825,130 815,145 812,175" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
-      <circle cx="812" cy="175" r="3" fill="#FF3D3D"/>
-      <text x="787" y="194" text-anchor="middle" font-size="9" fill="#555">ブーム高め・アーム引き込み</text>
+      <polyline points="825,130 815,145 812,175" fill="none" stroke="#F0F0F0" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="812" cy="175" r="4" fill="#FF3D3D"/>
+      <text x="787" y="196" text-anchor="middle" font-size="9" fill="#A0A0A0">ブーム高め・アーム引き込み</text>
     </svg>
     </div>
-    <div style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:16px;">
+    <div style="font-size:0.78rem;color:#A0A0A0;margin-bottom:16px;">
     ● 赤点 = 刃先位置　　各姿勢で刃先を基準点に合わせて座標差分を計測してください
     </div>
     """, unsafe_allow_html=True)
